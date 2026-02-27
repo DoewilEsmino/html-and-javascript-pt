@@ -5,74 +5,163 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Interactive Countdown Timer</title>
 <style>
+:root {
+  --accent1: #7c7cff;
+  --accent2: #00ffd5;
+  --accent3: #ff7ad9;
+  --glass: rgba(255,255,255,0.12);
+  --border: rgba(255,255,255,0.25);
+  --glow: 0 0 30px rgba(124,124,255,0.35), 0 0 60px rgba(0,255,213,0.2);
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: 100vh;
+  min-height: 100vh;
   color: #fff;
-  background: linear-gradient(135deg, #4e54c8, #8f94fb);
-  transition: background 0.5s;
+  background:
+    radial-gradient(800px 400px at 10% 0%, rgba(124,124,255,0.35), transparent 40%),
+    radial-gradient(600px 400px at 90% 10%, rgba(0,255,213,0.35), transparent 40%),
+    radial-gradient(500px 300px at 50% 100%, rgba(255,122,217,0.35), transparent 40%),
+    linear-gradient(135deg, #0b0f1a, #10152b);
   text-align: center;
   padding: 20px 0;
+  overflow-x: hidden;
 }
-h1 { margin-bottom: 10px; }
-p.description { font-size: 1em; margin-bottom: 20px; opacity:0.85; }
+
+h1 {
+  margin-bottom: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+p.description {
+  font-size: 1em;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
 .inputs input {
   width: 70px;
-  padding: 10px;
+  padding: 12px;
   margin: 5px;
-  border-radius: 8px;
-  border: none;
+  border-radius: 12px;
+  border: 1px solid var(--border);
   font-size: 1em;
   text-align: center;
+  color: #fff;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
 }
+
+.inputs input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
 .buttons button {
   margin: 5px;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
   font-size: 1em;
-  background: rgba(255,255,255,0.2);
-  color: #fff;
+  color: #0b1020;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.25s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
 }
-.buttons button:hover { background: rgba(255,255,255,0.4); }
+
+.buttons button:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: var(--glow);
+}
+
 .timer-container {
   position: relative;
   width: 220px;
   height: 220px;
   margin-top: 30px;
+  padding: 20px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  box-shadow: var(--glow);
 }
+
 svg { transform: rotate(-90deg); }
-circle { fill: none; stroke-width: 12; stroke-linecap: round; }
-#progress-bg { stroke: rgba(255,255,255,0.2); }
-#progress { stroke: #fff; stroke-dasharray: 565; stroke-dashoffset: 565; transition: stroke-dashoffset 0.2s linear; }
+
+circle {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+#progress-bg {
+  stroke: rgba(255,255,255,0.15);
+}
+
+#progress {
+  stroke: url(#gradientStroke);
+  stroke-dasharray: 565;
+  stroke-dashoffset: 565;
+  transition: stroke-dashoffset 0.2s linear;
+  filter: drop-shadow(0 0 10px rgba(124,124,255,0.6));
+}
+
 #timer {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  font-size: 2em;
+  font-size: 2.2em;
+  font-weight: 700;
+  letter-spacing: 1px;
   animation: pop 0.2s ease;
+  text-shadow: 0 0 20px rgba(255,255,255,0.35);
 }
+
 @keyframes pop {
   0% { transform: translate(-50%, -50%) scale(1.2); }
   100% { transform: translate(-50%, -50%) scale(1); }
 }
-.theme-selector { margin-top: 20px; display: flex; }
-.theme-selector button {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  margin: 0 5px;
-  padding: 0;
+
+.theme-selector {
+  margin-top: 24px;
+  display: flex;
+  gap: 10px;
 }
-footer { margin-top: auto; font-size: 0.9em; opacity: 0.7; }
+
+.theme-selector button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.7);
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-selector button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255,255,255,0.5);
+}
+
+footer {
+  margin-top: auto;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
 @media(max-width: 400px){
   .timer-container { width: 180px; height: 180px; }
   #timer { font-size: 1.8em; }
@@ -97,10 +186,18 @@ footer { margin-top: auto; font-size: 0.9em; opacity: 0.7; }
 </div>
 
 <div class="timer-container">
-  <svg width="220" height="220">
-    <circle id="progress-bg" r="90" cx="110" cy="110"></circle>
-    <circle id="progress" r="90" cx="110" cy="110"></circle>
-  </svg>
+<svg width="220" height="220">
+  <defs>
+    <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c7cff"/>
+      <stop offset="50%" stop-color="#00ffd5"/>
+      <stop offset="100%" stop-color="#ff7ad9"/>
+    </linearGradient>
+  </defs>
+
+  <circle id="progress-bg" r="90" cx="110" cy="110"></circle>
+  <circle id="progress" r="90" cx="110" cy="110"></circle>
+</svg>
   <div id="timer">00:00:00</div>
 </div>
 
