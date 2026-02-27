@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Interactive Countdown Timer</title>
+
+<!-- Vibe Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Orbitron:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
 :root {
   --accent1: #7c7cff;
@@ -11,28 +15,29 @@
   --accent3: #ff7ad9;
   --glass: rgba(255,255,255,0.12);
   --border: rgba(255,255,255,0.25);
-  --glow: 0 0 30px rgba(124,124,255,0.35), 0 0 60px rgba(0,255,213,0.2);
 }
 
+/* Body & Fonts */
 body {
   margin: 0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: "Space Grotesk", system-ui, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   min-height: 100vh;
   color: #fff;
-  background:
-    radial-gradient(800px 400px at 10% 0%, rgba(124,124,255,0.35), transparent 40%),
-    radial-gradient(600px 400px at 90% 10%, rgba(0,255,213,0.35), transparent 40%),
-    radial-gradient(500px 300px at 50% 100%, rgba(255,122,217,0.35), transparent 40%),
-    linear-gradient(135deg, #0b0f1a, #10152b);
   text-align: center;
   padding: 20px 0;
-  overflow-x: hidden;
+  transition: background 0.8s ease, font-family 0.4s ease;
 }
 
+/* Font presets per theme */
+body[data-font="neon"] { font-family: "Orbitron", monospace; }
+body[data-font="soft"] { font-family: "Space Grotesk", system-ui, sans-serif; }
+body[data-font="ocean"] { font-family: "Inter", system-ui, sans-serif; }
+
+/* Heading & Description */
 h1 {
   margin-bottom: 10px;
   font-weight: 800;
@@ -41,13 +46,13 @@ h1 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
 p.description {
   font-size: 1em;
   margin-bottom: 20px;
   opacity: 0.9;
 }
 
+/* Inputs */
 .inputs input {
   width: 70px;
   padding: 12px;
@@ -57,22 +62,28 @@ p.description {
   font-size: 1em;
   text-align: center;
   color: #fff;
-  background: var(--glass);
+  background: rgba(255,255,255,0.12);
   backdrop-filter: blur(12px);
   outline: none;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 
 .inputs input::placeholder {
   color: rgba(255,255,255,0.6);
 }
 
+.inputs input:not(:placeholder-shown)::placeholder {
+  color: transparent;
+}
+
+/* Buttons */
 .buttons button {
   margin: 5px;
   padding: 12px 22px;
   border-radius: 999px;
   border: 1px solid var(--border);
   font-size: 1em;
+  font-family: inherit; /* inherit theme font */
+  font-weight: 600;
   color: #0b1020;
   background: linear-gradient(135deg, var(--accent1), var(--accent2));
   cursor: pointer;
@@ -82,9 +93,9 @@ p.description {
 
 .buttons button:hover {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: var(--glow);
 }
 
+/* Timer Container */
 .timer-container {
   position: relative;
   width: 220px;
@@ -94,30 +105,26 @@ p.description {
   border-radius: 24px;
   background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
   backdrop-filter: blur(14px);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255,255,255,0.25);
   box-shadow: var(--glow);
 }
 
+/* SVG circle */
 svg { transform: rotate(-90deg); }
-
 circle {
   fill: none;
   stroke-width: 12;
   stroke-linecap: round;
 }
-
-#progress-bg {
-  stroke: rgba(255,255,255,0.15);
-}
-
+#progress-bg { stroke: rgba(255,255,255,0.15); }
 #progress {
-  stroke: url(#gradientStroke);
   stroke-dasharray: 565;
   stroke-dashoffset: 565;
   transition: stroke-dashoffset 0.2s linear;
   filter: drop-shadow(0 0 10px rgba(124,124,255,0.6));
 }
 
+/* Timer Text */
 #timer {
   position: absolute;
   top: 50%;
@@ -135,6 +142,7 @@ circle {
   100% { transform: translate(-50%, -50%) scale(1); }
 }
 
+/* Theme Selector */
 .theme-selector {
   margin-top: 24px;
   display: flex;
@@ -156,19 +164,48 @@ circle {
   box-shadow: 0 0 15px rgba(255,255,255,0.5);
 }
 
-footer {
-  margin-top: auto;
-  font-size: 0.9em;
-  opacity: 0.7;
-}
+footer { margin-top: auto; font-size: 0.9em; opacity: 0.7; }
 
+/* Media Query */
 @media(max-width: 400px){
   .timer-container { width: 180px; height: 180px; }
   #timer { font-size: 1.8em; }
 }
+
+/* ========== THEME OVERRIDES ========== */
+body[data-theme="blue"] {
+  --accent1: #7c7cff;
+  --accent2: #00ffd5;
+  --accent3: #ff7ad9;
+  --glow: 0 0 30px #7c7cff, 0 0 60px #00ffd5;
+  background: radial-gradient(800px 400px at 10% 0%, rgba(124,124,255,0.35), transparent 40%),
+              radial-gradient(600px 400px at 90% 10%, rgba(0,255,213,0.35), transparent 40%),
+              radial-gradient(500px 300px at 50% 100%, rgba(255,122,217,0.35), transparent 40%),
+              linear-gradient(135deg, #0b0f1a, #10152b);
+}
+body[data-theme="pink"] {
+  --accent1: #ff5fa2;
+  --accent2: #ff8fd3;
+  --accent3: #ffc1e8;
+  --glow: 0 0 30px #ff5fa2, 0 0 60px #ff8fd3;
+  background: radial-gradient(800px 400px at 10% 0%, rgba(255,95,162,0.35), transparent 40%),
+              radial-gradient(600px 400px at 90% 10%, rgba(255,143,211,0.35), transparent 40%),
+              radial-gradient(500px 300px at 50% 100%, rgba(255,193,232,0.35), transparent 40%),
+              linear-gradient(135deg, #1a0b14, #2b1020);
+}
+body[data-theme="ocean"] {
+  --accent1: #43cea2;
+  --accent2: #185a9d;
+  --accent3: #00bcd4;
+  --glow: 0 0 30px #43cea2, 0 0 60px #00bcd4;
+  background: radial-gradient(800px 400px at 10% 0%, rgba(67,206,162,0.35), transparent 40%),
+              radial-gradient(600px 400px at 90% 10%, rgba(24,90,157,0.35), transparent 40%),
+              radial-gradient(500px 300px at 50% 100%, rgba(0,150,136,0.35), transparent 40%),
+              linear-gradient(135deg, #06131a, #082a3f);
+}
 </style>
 </head>
-<body>
+<body data-font="soft" data-theme="blue">
 
 <h1>Interactive Countdown Timer</h1>
 <p class="description">Enter hours, minutes, and seconds, then click Start. The circle will countdown to zero!</p>
@@ -186,25 +223,24 @@ footer {
 </div>
 
 <div class="timer-container">
-<svg width="220" height="220">
-  <defs>
-    <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7c7cff"/>
-      <stop offset="50%" stop-color="#00ffd5"/>
-      <stop offset="100%" stop-color="#ff7ad9"/>
-    </linearGradient>
-  </defs>
-
-  <circle id="progress-bg" r="90" cx="110" cy="110"></circle>
-  <circle id="progress" r="90" cx="110" cy="110"></circle>
-</svg>
+  <svg width="220" height="220">
+    <defs>
+      <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="var(--accent1)"/>
+        <stop offset="50%" stop-color="var(--accent2)"/>
+        <stop offset="100%" stop-color="var(--accent3)"/>
+      </linearGradient>
+    </defs>
+    <circle id="progress-bg" r="90" cx="110" cy="110"></circle>
+    <circle id="progress" r="90" cx="110" cy="110" stroke="url(#gradientStroke)"></circle>
+  </svg>
   <div id="timer">00:00:00</div>
 </div>
 
 <div class="theme-selector">
-  <button style="background: linear-gradient(135deg, #4e54c8, #8f94fb);" data-gradient="linear-gradient(135deg, #4e54c8, #8f94fb)"></button>
-  <button style="background: linear-gradient(135deg, #ff758c, #ff7eb3);" data-gradient="linear-gradient(135deg, #ff758c, #ff7eb3)"></button>
-  <button style="background: linear-gradient(135deg, #43cea2, #185a9d);" data-gradient="linear-gradient(135deg, #43cea2, #185a9d)"></button>
+  <button style="background: linear-gradient(135deg, #7c7cff, #00ffd5);" data-font="soft" data-theme="blue"></button>
+  <button style="background: linear-gradient(135deg, #ff758c, #ff7eb3);" data-font="neon" data-theme="pink"></button>
+  <button style="background: linear-gradient(135deg, #43cea2, #185a9d);" data-font="ocean" data-theme="ocean"></button>
 </div>
 
 <footer>Created by Doewil C. Esmino</footer>
@@ -243,10 +279,9 @@ function startInterval() {
         if(navigator.vibrate) navigator.vibrate([500,200,500]);
       }
     }
-  }, 100); // smooth update
+  }, 100);
 }
 
-// Start button
 document.getElementById('startBtn').addEventListener('click', () => {
   const h = parseInt(document.getElementById('hours').value) || 0;
   const m = parseInt(document.getElementById('minutes').value) || 0;
@@ -262,24 +297,22 @@ document.getElementById('startBtn').addEventListener('click', () => {
   startInterval();
 });
 
-// Pause/Resume toggle
 const pauseBtn = document.getElementById('pauseBtn');
 pauseBtn.addEventListener('click', () => {
   if (remainingSeconds <= 0) return;
-  if(!isPaused) {
-    // pause
+  if (!isPaused) {
     isPaused = true;
-    endTime = endTime - Date.now(); // save remaining ms
+    clearInterval(countdownInterval);
     pauseBtn.textContent = "Resume";
   } else {
-    // resume
     isPaused = false;
     endTime = Date.now() + remainingSeconds*1000;
     pauseBtn.textContent = "Pause";
+    updateDisplay(remainingSeconds);
+    startInterval();
   }
 });
 
-// Reset button
 document.getElementById('resetBtn').addEventListener('click', () => {
   clearInterval(countdownInterval);
   totalSeconds = 0;
@@ -292,10 +325,10 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   document.getElementById('seconds').value = '';
 });
 
-// Theme selector
-document.querySelectorAll('.theme-selector button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.body.style.background = btn.getAttribute('data-gradient');
+document.querySelectorAll('.theme-selector button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.body.setAttribute('data-font', btn.getAttribute('data-font'));
+    document.body.setAttribute('data-theme', btn.getAttribute('data-theme'));
   });
 });
 
