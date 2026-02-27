@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Countdown Timer</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  color: #fff;
+  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+  transition: background 0.5s;
+  text-align: center;
+  padding: 20px 0;
+}
+h1 { margin-bottom: 10px; }
+p.description { font-size: 1em; margin-bottom: 20px; opacity:0.85; }
+.inputs input {
+  width: 70px;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1em;
+  text-align: center;
+}
+.buttons button {
+  margin: 5px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1em;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.buttons button:hover { background: rgba(255,255,255,0.4); }
+.timer-container {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin-top: 30px;
+}
+svg { transform: rotate(-90deg); }
+circle { fill: none; stroke-width: 12; stroke-linecap: round; }
+#progress-bg { stroke: rgba(255,255,255,0.2); }
+#progress { stroke: #fff; stroke-dasharray: 565; stroke-dashoffset: 565; transition: stroke-dashoffset 0.2s linear; }
+#timer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 2em;
+  animation: pop 0.2s ease;
+}
+@keyframes pop {
+  0% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+.theme-selector { margin-top: 20px; display: flex; }
+.theme-selector button {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  margin: 0 5px;
+  padding: 0;
+}
+footer { margin-top: auto; font-size: 0.9em; opacity: 0.7; }
+@media(max-width: 400px){
+  .timer-container { width: 180px; height: 180px; }
+  #timer { font-size: 1.8em; }
+}
+</style>
+</head>
+<body>
+
+<h1>Interactive Countdown Timer</h1>
+<p class="description">Enter hours, minutes, and seconds, then click Start. The circle will countdown to zero!</p>
+
+<div class="inputs">
+  <input type="number" id="hours" placeholder="H" min="0">
+  <input type="number" id="minutes" placeholder="M" min="0" max="59">
+  <input type="number" id="seconds" placeholder="S" min="0" max="59">
+</div>
+
+<div class="buttons">
+  <button id="startBtn">Start</button>
+  <button id="pauseBtn">Pause</button>
+  <button id="resetBtn">Reset</button>
+</div>
+
+<div class="timer-container">
+  <svg width="220" height="220">
+    <circle id="progress-bg" r="90" cx="110" cy="110"></circle>
+    <circle id="progress" r="90" cx="110" cy="110"></circle>
+  </svg>
+  <div id="timer">00:00:00</div>
+</div>
+
+<div class="theme-selector">
+  <button style="background: linear-gradient(135deg, #4e54c8, #8f94fb);" data-gradient="linear-gradient(135deg, #4e54c8, #8f94fb)"></button>
+  <button style="background: linear-gradient(135deg, #ff758c, #ff7eb3);" data-gradient="linear-gradient(135deg, #ff758c, #ff7eb3)"></button>
+  <button style="background: linear-gradient(135deg, #43cea2, #185a9d);" data-gradient="linear-gradient(135deg, #43cea2, #185a9d)"></button>
+</div>
+
+<footer>Created by Doewil C. Esmino</footer>
+
+<script>
+const timerEl = document.getElementById('timer');
+const progressEl = document.getElementById('progress');
+const CIRCLE_LENGTH = 565;
+
+let totalSeconds = 0;
+let remainingSeconds = 0;
+let countdownInterval;
+let isPaused = false;
+let endTime = 0;
+
+function updateDisplay(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  timerEl.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  timerEl.style.animation = 'pop 0.2s ease';
+  const percent = totalSeconds === 0 ? 0 : seconds / totalSeconds;
+  progressEl.style.strokeDashoffset = CIRCLE_LENGTH * (1 - percent);
+}
+
+function startInterval() {
+  clearInterval(countdownInterval);
+  countdownInterval = setInterval(() => {
+    if (!isPaused) {
+      const now = Date.now();
+      remainingSeconds = Math.max(0, Math.ceil((endTime - now)/1000));
+      updateDisplay(remainingSeconds);
+      if (remainingSeconds <= 0) {
+        clearInterval(countdownInterval);
+        alert("Time's up!");
+        if(navigator.vibrate) navigator.vibrate([500,200,500]);
+      }
+    }
+  }, 100); // smooth update
+}
+
+// Start button
+document.getElementById('startBtn').addEventListener('click', () => {
+  const h = parseInt(document.getElementById('hours').value) || 0;
+  const m = parseInt(document.getElementById('minutes').value) || 0;
+  const s = parseInt(document.getElementById('seconds').value) || 0;
+  totalSeconds = h*3600 + m*60 + s;
+  if(totalSeconds <= 0) return alert("Enter a time greater than 0");
+
+  remainingSeconds = totalSeconds;
+  isPaused = false;
+  endTime = Date.now() + remainingSeconds*1000;
+  document.getElementById('pauseBtn').textContent = "Pause";
+  updateDisplay(remainingSeconds);
+  startInterval();
+});
+
+// Pause/Resume toggle
+const pauseBtn = document.getElementById('pauseBtn');
+pauseBtn.addEventListener('click', () => {
+  if (remainingSeconds <= 0) return;
+  if(!isPaused) {
+    // pause
+    isPaused = true;
+    endTime = endTime - Date.now(); // save remaining ms
+    pauseBtn.textContent = "Resume";
+  } else {
+    // resume
+    isPaused = false;
+    endTime = Date.now() + remainingSeconds*1000;
+    pauseBtn.textContent = "Pause";
+  }
+});
+
+// Reset button
+document.getElementById('resetBtn').addEventListener('click', () => {
+  clearInterval(countdownInterval);
+  totalSeconds = 0;
+  remainingSeconds = 0;
+  isPaused = false;
+  document.getElementById('pauseBtn').textContent = "Pause";
+  updateDisplay(0);
+  document.getElementById('hours').value = '';
+  document.getElementById('minutes').value = '';
+  document.getElementById('seconds').value = '';
+});
+
+// Theme selector
+document.querySelectorAll('.theme-selector button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.body.style.background = btn.getAttribute('data-gradient');
+  });
+});
+
+updateDisplay(0);
+</script>
+
+</body>
+</html>
