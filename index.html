@@ -1,339 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Interactive Countdown Timer</title>
+  <meta charset="UTF-8">
+  <title>Countdown Timer</title>
 
-<!-- Vibe Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Orbitron:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root {
-  --accent1: #7c7cff;
-  --accent2: #00ffd5;
-  --accent3: #ff7ad9;
-  --glass: rgba(255,255,255,0.12);
-  --border: rgba(255,255,255,0.25);
-}
-
-/* Body & Fonts */
-body {
-  margin: 0;
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  color: #fff;
-  text-align: center;
-  padding: 20px 0;
-  transition: background 0.8s ease, font-family 0.4s ease;
-}
-
-/* Font presets per theme */
-body[data-font="neon"] { font-family: "Orbitron", monospace; }
-body[data-font="soft"] { font-family: "Space Grotesk", system-ui, sans-serif; }
-body[data-font="ocean"] { font-family: "Inter", system-ui, sans-serif; }
-
-/* Heading & Description */
-h1 {
-  margin-bottom: 10px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-p.description {
-  font-size: 1em;
-  margin-bottom: 20px;
-  opacity: 0.9;
-}
-
-/* Inputs */
-.inputs input {
-  width: 70px;
-  padding: 12px;
-  margin: 5px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  font-size: 1em;
-  text-align: center;
-  color: #fff;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(12px);
-  outline: none;
-}
-
-.inputs input::placeholder {
-  color: rgba(255,255,255,0.6);
-}
-
-.inputs input:not(:placeholder-shown)::placeholder {
-  color: transparent;
-}
-
-/* Buttons */
-.buttons button {
-  margin: 5px;
-  padding: 12px 22px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  font-size: 1em;
-  font-family: inherit; /* inherit theme font */
-  font-weight: 600;
-  color: #0b1020;
-  background: linear-gradient(135deg, var(--accent1), var(--accent2));
-  cursor: pointer;
-  transition: 0.25s ease;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-}
-
-.buttons button:hover {
-  transform: translateY(-2px) scale(1.03);
-}
-
-/* Timer Container */
-.timer-container {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  margin-top: 30px;
-  padding: 20px;
-  border-radius: 24px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255,255,255,0.25);
-  box-shadow: var(--glow);
-}
-
-/* SVG circle */
-svg { transform: rotate(-90deg); }
-circle {
-  fill: none;
-  stroke-width: 12;
-  stroke-linecap: round;
-}
-#progress-bg { stroke: rgba(255,255,255,0.15); }
-#progress {
-  stroke-dasharray: 565;
-  stroke-dashoffset: 565;
-  transition: stroke-dashoffset 0.2s linear;
-  filter: drop-shadow(0 0 10px rgba(124,124,255,0.6));
-}
-
-/* Timer Text */
-#timer {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  font-size: 2.2em;
-  font-weight: 700;
-  letter-spacing: 1px;
-  animation: pop 0.2s ease;
-  text-shadow: 0 0 20px rgba(255,255,255,0.35);
-}
-
-@keyframes pop {
-  0% { transform: translate(-50%, -50%) scale(1.2); }
-  100% { transform: translate(-50%, -50%) scale(1); }
-}
-
-/* Theme Selector */
-.theme-selector {
-  margin-top: 24px;
-  display: flex;
-  gap: 10px;
-}
-
-.theme-selector button {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.7);
-  padding: 0;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.theme-selector button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(255,255,255,0.5);
-}
-
-footer { margin-top: auto; font-size: 0.9em; opacity: 0.7; }
-
-/* Media Query */
-@media(max-width: 400px){
-  .timer-container { width: 180px; height: 180px; }
-  #timer { font-size: 1.8em; }
-}
-
-/* ========== THEME OVERRIDES ========== */
-body[data-theme="blue"] {
-  --accent1: #7c7cff;
-  --accent2: #00ffd5;
-  --accent3: #ff7ad9;
-  --glow: 0 0 30px #7c7cff, 0 0 60px #00ffd5;
-  background: radial-gradient(800px 400px at 10% 0%, rgba(124,124,255,0.35), transparent 40%),
-              radial-gradient(600px 400px at 90% 10%, rgba(0,255,213,0.35), transparent 40%),
-              radial-gradient(500px 300px at 50% 100%, rgba(255,122,217,0.35), transparent 40%),
-              linear-gradient(135deg, #0b0f1a, #10152b);
-}
-body[data-theme="pink"] {
-  --accent1: #ff5fa2;
-  --accent2: #ff8fd3;
-  --accent3: #ffc1e8;
-  --glow: 0 0 30px #ff5fa2, 0 0 60px #ff8fd3;
-  background: radial-gradient(800px 400px at 10% 0%, rgba(255,95,162,0.35), transparent 40%),
-              radial-gradient(600px 400px at 90% 10%, rgba(255,143,211,0.35), transparent 40%),
-              radial-gradient(500px 300px at 50% 100%, rgba(255,193,232,0.35), transparent 40%),
-              linear-gradient(135deg, #1a0b14, #2b1020);
-}
-body[data-theme="ocean"] {
-  --accent1: #43cea2;
-  --accent2: #185a9d;
-  --accent3: #00bcd4;
-  --glow: 0 0 30px #43cea2, 0 0 60px #00bcd4;
-  background: radial-gradient(800px 400px at 10% 0%, rgba(67,206,162,0.35), transparent 40%),
-              radial-gradient(600px 400px at 90% 10%, rgba(24,90,157,0.35), transparent 40%),
-              radial-gradient(500px 300px at 50% 100%, rgba(0,150,136,0.35), transparent 40%),
-              linear-gradient(135deg, #06131a, #082a3f);
-}
-</style>
+  <!-- Link CSS and JS -->
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
-<body data-font="soft" data-theme="blue">
+<body>
 
-<h1>Interactive Countdown Timer</h1>
-<p class="description">Enter hours, minutes, and seconds, then click Start. The circle will countdown to zero!</p>
+  <h2>Countdown Timer</h2>
 
-<div class="inputs">
-  <input type="number" id="hours" placeholder="H" min="0">
-  <input type="number" id="minutes" placeholder="M" min="0" max="59">
-  <input type="number" id="seconds" placeholder="S" min="0" max="59">
-</div>
+  <input id="h" placeholder="H" type="number">
+  <input id="m" placeholder="M" type="number">
+  <input id="s" placeholder="S" type="number">
 
-<div class="buttons">
-  <button id="startBtn">Start</button>
-  <button id="pauseBtn">Pause</button>
-  <button id="resetBtn">Reset</button>
-</div>
+  <br>
 
-<div class="timer-container">
-  <svg width="220" height="220">
-    <defs>
-      <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="var(--accent1)"/>
-        <stop offset="50%" stop-color="var(--accent2)"/>
-        <stop offset="100%" stop-color="var(--accent3)"/>
-      </linearGradient>
-    </defs>
-    <circle id="progress-bg" r="90" cx="110" cy="110"></circle>
-    <circle id="progress" r="90" cx="110" cy="110" stroke="url(#gradientStroke)"></circle>
-  </svg>
-  <div id="timer">00:00:00</div>
-</div>
+  <button onclick="start()">Start</button>
+  <button id="pauseBtn" onclick="pause()">Pause</button>
+  <button onclick="reset()">Reset</button>
 
-<div class="theme-selector">
-  <button style="background: linear-gradient(135deg, #7c7cff, #00ffd5);" data-font="soft" data-theme="blue"></button>
-  <button style="background: linear-gradient(135deg, #ff758c, #ff7eb3);" data-font="neon" data-theme="pink"></button>
-  <button style="background: linear-gradient(135deg, #43cea2, #185a9d);" data-font="ocean" data-theme="ocean"></button>
-</div>
+  <div id="wrap">
+    <svg width="140" height="140">
+      <circle r="60" cx="70" cy="70" fill="none" stroke="#333" stroke-width="8"></circle>
+      <circle id="p" r="60" cx="70" cy="70" fill="none" stroke="#7c7cff" stroke-width="8"
+              stroke-dasharray="377" stroke-dashoffset="377"></circle>
+    </svg>
+    <div id="t">00:00:00</div>
+  </div>
 
-<footer>Created by Doewil C. Esmino</footer>
-
-<script>
-const timerEl = document.getElementById('timer');
-const progressEl = document.getElementById('progress');
-const CIRCLE_LENGTH = 565;
-
-let totalSeconds = 0;
-let remainingSeconds = 0;
-let countdownInterval;
-let isPaused = false;
-let endTime = 0;
-
-function updateDisplay(seconds) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  timerEl.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-  timerEl.style.animation = 'pop 0.2s ease';
-  const percent = totalSeconds === 0 ? 0 : seconds / totalSeconds;
-  progressEl.style.strokeDashoffset = CIRCLE_LENGTH * (1 - percent);
-}
-
-function startInterval() {
-  clearInterval(countdownInterval);
-  countdownInterval = setInterval(() => {
-    if (!isPaused) {
-      const now = Date.now();
-      remainingSeconds = Math.max(0, Math.ceil((endTime - now)/1000));
-      updateDisplay(remainingSeconds);
-      if (remainingSeconds <= 0) {
-        clearInterval(countdownInterval);
-        alert("Time's up!");
-        if(navigator.vibrate) navigator.vibrate([500,200,500]);
-      }
-    }
-  }, 100);
-}
-
-document.getElementById('startBtn').addEventListener('click', () => {
-  const h = parseInt(document.getElementById('hours').value) || 0;
-  const m = parseInt(document.getElementById('minutes').value) || 0;
-  const s = parseInt(document.getElementById('seconds').value) || 0;
-  totalSeconds = h*3600 + m*60 + s;
-  if(totalSeconds <= 0) return alert("Enter a time greater than 0");
-
-  remainingSeconds = totalSeconds;
-  isPaused = false;
-  endTime = Date.now() + remainingSeconds*1000;
-  document.getElementById('pauseBtn').textContent = "Pause";
-  updateDisplay(remainingSeconds);
-  startInterval();
-});
-
-const pauseBtn = document.getElementById('pauseBtn');
-pauseBtn.addEventListener('click', () => {
-  if (remainingSeconds <= 0) return;
-  if (!isPaused) {
-    isPaused = true;
-    clearInterval(countdownInterval);
-    pauseBtn.textContent = "Resume";
-  } else {
-    isPaused = false;
-    endTime = Date.now() + remainingSeconds*1000;
-    pauseBtn.textContent = "Pause";
-    updateDisplay(remainingSeconds);
-    startInterval();
-  }
-});
-
-document.getElementById('resetBtn').addEventListener('click', () => {
-  clearInterval(countdownInterval);
-  totalSeconds = 0;
-  remainingSeconds = 0;
-  isPaused = false;
-  document.getElementById('pauseBtn').textContent = "Pause";
-  updateDisplay(0);
-  document.getElementById('hours').value = '';
-  document.getElementById('minutes').value = '';
-  document.getElementById('seconds').value = '';
-});
-
-document.querySelectorAll('.theme-selector button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.body.setAttribute('data-font', btn.getAttribute('data-font'));
-    document.body.setAttribute('data-theme', btn.getAttribute('data-theme'));
-  });
-});
-
-updateDisplay(0);
-</script>
+  <div id="msg">Time’s up!</div>
 
 </body>
 </html>
