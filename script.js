@@ -1,5 +1,7 @@
+// Simple Countdown Timer 
+
 let total = 0;
-let remainingMs = 0; // store milliseconds instead of seconds
+let remainingMs = 0; 
 let timer = null;
 let paused = false;
 
@@ -18,7 +20,7 @@ function formatTime(seconds) {
 
 function update() {
   if (!paused && remainingMs > 0) {
-    remainingMs = Math.max(0, remainingMs - 100); // decrement 100ms per tick
+    remainingMs = Math.max(0, remainingMs - 100); 
     const remainingSec = Math.ceil(remainingMs / 1000);
     t.textContent = formatTime(remainingSec);
     p.style.strokeDashoffset = CIRCLE * (1 - remainingSec / (total / 1000));
@@ -36,7 +38,7 @@ function start() {
   const mVal = +m.value || 0;
   const sVal = +s.value || 0;
 
-  total = (hVal * 3600 + mVal * 60 + sVal) * 1000; // store in ms
+  total = (hVal * 3600 + mVal * 60 + sVal) * 1000; 
   if (total <= 0) return alert("Enter a time");
 
   remainingMs = total;
@@ -46,7 +48,7 @@ function start() {
 
   clearInterval(timer);
   timer = setInterval(update, 100);
-  update(); // immediately show first tick
+  update(); 
 }
 
 function pause() {
